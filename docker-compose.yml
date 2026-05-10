@@ -34,9 +34,12 @@ services:
       # de la imagen oficial. Para revertir al UI vanilla, comentar esta línea.
       - /root/projects/restreamer-ui/build:/core/ui:ro
     environment:
-      # Auth — cambiar después del primer setup vía UI
-      CORE_API_AUTH_USERNAME: admin
-      CORE_API_AUTH_PASSWORD: changeme_first_login
+      # Auth IAM v3 — REQUIERE enable=true para que las credenciales se apliquen
+      # El password aquí solo se usa la primera vez (cuando db.json está vacío).
+      # Cambios posteriores se hacen via UI en /ui/iam o reset borrando db.json.
+      CORE_API_AUTH_ENABLE: "true"
+      CORE_API_AUTH_USERNAME: ${CORE_API_AUTH_USERNAME}
+      CORE_API_AUTH_PASSWORD: ${CORE_API_AUTH_PASSWORD}
       # Resource limits suaves (FFmpeg puede ser pesado)
       CORE_FFMPEG_LOG_MAX_LINES: "50"
     # Si tienes GPU disponible, descomenta para hardware accel:
