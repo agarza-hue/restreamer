@@ -16,9 +16,14 @@ services:
     image: datarhei/restreamer:latest
     container_name: restreamer
     restart: unless-stopped
+    networks:
+      # Red propia + red de juntas_nginx para que nginx alcance al container
+      # via nombre 'restreamer:8080' sin exponer 8080 al internet público.
+      - default
+      - juntas
     ports:
-      - "8085:8080"
-      - "8186:8181"
+      # NO exponer 8080/8181 al host — nginx HTTPS los alcanza via Docker network
+      # interno. Solo RTMP/SRT siguen públicos para OBS/cámaras externas.
       - "1935:1935"
       - "1936:1936"
       - "6000:6000/udp"
@@ -37,3 +42,12 @@ services:
     # Si tienes GPU disponible, descomenta para hardware accel:
     # devices:
     #   - /dev/dri:/dev/dri
+
+networks:
+  default:
+    # Red propia del container — para futuros workers FFmpeg si los agregamos
+    driver: bridge
+  juntas:
+    # Red externa donde vive juntas_nginx — para que el reverse proxy nos alcance
+    external: true
+    name: juntas-app_juntas_net
