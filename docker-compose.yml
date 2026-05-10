@@ -1,0 +1,36 @@
+# Restreamer self-hosted en VPS de Adolfo
+#
+# Usa la imagen oficial datarhei/restreamer:latest (pre-built).
+# Si en el futuro modificas UI/core, cambia la línea `image:` por `build: .`
+# para usar el Dockerfile del fork.
+#
+# Port mapping (8080 está ocupado por strategy_appsmith):
+#   8085 → 8080  HTTP UI
+#   8186 → 8181  HTTPS UI
+#   1935 → 1935  RTMP server
+#   1936 → 1936  RTMPS
+#   6000 → 6000  SRT (UDP)
+
+services:
+  restreamer:
+    image: datarhei/restreamer:latest
+    container_name: restreamer
+    restart: unless-stopped
+    ports:
+      - "8085:8080"
+      - "8186:8181"
+      - "1935:1935"
+      - "1936:1936"
+      - "6000:6000/udp"
+    volumes:
+      - ./data:/core/data
+      - ./config:/core/config
+    environment:
+      # Auth — cambiar después del primer setup vía UI
+      CORE_API_AUTH_USERNAME: admin
+      CORE_API_AUTH_PASSWORD: changeme_first_login
+      # Resource limits suaves (FFmpeg puede ser pesado)
+      CORE_FFMPEG_LOG_MAX_LINES: "50"
+    # Si tienes GPU disponible, descomenta para hardware accel:
+    # devices:
+    #   - /dev/dri:/dev/dri
