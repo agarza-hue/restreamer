@@ -25,6 +25,9 @@ services:
     volumes:
       - ./data:/core/data
       - ./config:/core/config
+      # UI custom (MolloStream — paleta Mocha + branding) — override del UI built-in
+      # de la imagen oficial. Para revertir al UI vanilla, comentar esta línea.
+      - /root/projects/restreamer-ui/build:/core/ui:ro
     environment:
       # Auth — cambiar después del primer setup vía UI
       CORE_API_AUTH_USERNAME: admin
